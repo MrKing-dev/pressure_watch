@@ -1,15 +1,14 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:pressure_watch/chart_data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'init.dart';
 
 import 'colors.dart';
 
 class LineChartWidget extends StatelessWidget {
-  final List weatherPoints;
-  LineChartWidget(this.weatherPoints, {super.key});
+  LineChartWidget({super.key});
   final mainColor = ColorThemes()
       .getTheme(DateTime.now().toLocal().hour > 6 &&
           DateTime.now().toLocal().hour < 18)
@@ -18,10 +17,19 @@ class LineChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final spots = Init.chartData.entries
+        .map((element) => FlSpot(
+              element.key.toDouble(),
+              element.value,
+            ))
+        .toList();
+    print(spots);
+    print(Init.chartData);
+
     return LineChart(
       LineChartData(
         minX: 0,
-        maxX: (weatherPoints.length.toDouble() - 1),
+        maxX: 7,
         titlesData: FlTitlesData(
           show: true,
           rightTitles: AxisTitles(
@@ -48,30 +56,32 @@ class LineChartWidget extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 30,
-              getTitlesWidget: ((value, meta) {
-                switch (DateTime.now()
-                    .subtract(Duration(days: value.toInt()))
-                    .toLocal()
-                    .weekday) {
-                  case 1:
-                    return Text('Mon');
-                  case 2:
-                    return Text('Tue');
-                  case 3:
-                    return Text('Wed');
-                  case 4:
-                    return Text('Thu');
-                  case 5:
-                    return Text('Fri');
-                  case 6:
-                    return Text('Sat');
-                  case 7:
-                    return Text('Sun');
+              getTitlesWidget: ((value, meta) =>
+                  Text(value.toInt().toString())),
+              // getTitlesWidget: ((value, meta) {
+              //   switch (DateTime.now()
+              //       .subtract(Duration(days: value.toInt()))
+              //       .toLocal()
+              //       .weekday) {
+              //     case 1:
+              //       return Text('Mon');
+              //     case 2:
+              //       return Text('Tue');
+              //     case 3:
+              //       return Text('Wed');
+              //     case 4:
+              //       return Text('Thu');
+              //     case 5:
+              //       return Text('Fri');
+              //     case 6:
+              //       return Text('Sat');
+              //     case 7:
+              //       return Text('Sun');
 
-                  default:
-                    return Text('Invalid');
-                }
-              }),
+              //     default:
+              //       return Text('Invalid');
+              //   }
+              // }),
             ),
           ),
         ),
@@ -100,7 +110,7 @@ class LineChartWidget extends StatelessWidget {
         backgroundColor: Colors.grey[800]!.withOpacity(0.2),
         lineBarsData: [
           LineChartBarData(
-            spots: weatherPoints.map((e) => FlSpot(e.x, e.y)).toList(),
+            spots: spots,
             isCurved: true,
             color: mainColor,
             barWidth: 2,

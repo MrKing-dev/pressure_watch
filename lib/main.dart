@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:pressure_watch/chart_data.dart';
 import 'package:pressure_watch/data.dart';
 import 'package:pressure_watch/init.dart';
 import 'package:pressure_watch/line_chart.dart';
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ColorThemes().getTheme(DateTime.now().toLocal().hour > 6 &&
           DateTime.now().toLocal().hour < 18),
       home: FutureBuilder(
-        future: Init().setLocationCity(),
+        future: Init().initialize(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return MyHomePage(
@@ -136,45 +135,45 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
-              Flexible(
-                // Chart load items
-                flex: 2,
-                child: Container(
-                  width: 300,
-                  child: Column(
-                    children: [
-                      Text('Select number of days to load for chart.'),
-                      Slider(
-                        value: sliderValue,
-                        label: sliderValue.toInt().toString(),
-                        min: 1,
-                        max: 10,
-                        divisions: 10,
-                        onChanged: (double value) {
-                          setState(() {
-                            sliderValue = value;
-                          });
-                        },
-                      ),
-                      ElevatedButton(
-                        onPressed: (() async {
-                          weatherPoints(sliderValue.toInt()).then((value) {
-                            setState(() {
-                              chartInputList = value;
-                            });
-                          });
-                        }),
-                        child: Text('Load Chart'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // Flexible(
+              //   // Chart load items
+              //   flex: 2,
+              //   child: Container(
+              //     width: 300,
+              //     child: Column(
+              //       children: [
+              //         Text('Select number of days to load for chart.'),
+              //         Slider(
+              //           value: sliderValue,
+              //           label: sliderValue.toInt().toString(),
+              //           min: 1,
+              //           max: 10,
+              //           divisions: 10,
+              //           onChanged: (double value) {
+              //             setState(() {
+              //               sliderValue = value;
+              //             });
+              //           },
+              //         ),
+              //         ElevatedButton(
+              //           onPressed: (() async {
+              //             weatherPoints(sliderValue.toInt()).then((value) {
+              //               setState(() {
+              //                 chartInputList = value;
+              //               });
+              //             });
+              //           }),
+              //           child: Text('Load Chart'),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               Flexible(
                 // Chart display
                 flex: 5,
                 child: Container(
-                  child: LineChartWidget(chartInputList),
+                  child: LineChartWidget(),
                   margin: EdgeInsets.all(3),
                   padding: EdgeInsets.all(15),
                 ),

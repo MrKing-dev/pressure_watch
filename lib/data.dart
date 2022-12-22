@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pressure_watch/chart_data.dart';
 import 'package:pressure_watch/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:geocoding/geocoding.dart';
 
 class Data {
   var apiKey = '34be28e6e2d64c17702640838b0efbf8';
+  var historykey = 'S7SS885MC58WKKSPJ2DQ96TWX';
 
   Future<Position> determinePosition() async {
     bool serviceEnabled;
@@ -69,41 +70,61 @@ class Data {
     }
   }
 
-  Future<HistoricalWeather> getHistoricalWeatherData(int date) async {
+  Future<dynamic> getHistoricalWeatherData() async {
+    print('Getting location for getHistoricalWeatherData');
     Position position = await determinePosition();
+    print('Finished location for getHistoricalWeatherData');
+
     var latitude = position.latitude;
     var longitude = position.longitude;
+    var placemark = await placemarkFromCoordinates(latitude, longitude);
+    var zip = placemark[0].postalCode;
 
+    print('Running api call for getHistoricalWeatherData');
     final response = await http.get(Uri.parse(
-        'https://api.openweathermap.org/data/3.0/onecall/timemachine?lat=$latitude&lon=$longitude&dt=$date&appid=$apiKey'));
+        'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$zip/2022-12-15/2022-12-22?unitGroup=us&elements=datetimeEpoch%2Cpressure&include=days%2Cobs%2Cremote%2Ccurrent%2Cfcst&key=S7SS885MC58WKKSPJ2DQ96TWX&contentType=json'));
 
     if (response.statusCode == 200) {
-      return HistoricalWeather.fromJson(jsonDecode(response.body));
+      print('Got good response from api call in getHistoricalWeatherData');
+      //return HistoricalWeather.fromJson(jsonDecode(response.body));
+      return jsonDecode(response.body);
     } else {
+      print('Bad api call in getHistoricalWeatherData');
       throw Exception('Failed to load historical weather data');
     }
   }
 
-  Future<List> populateWeatherGraph(int daysToRun) async {
+  Future<Map> populateWeatherGraph() async {
     var pressureArr = Map();
     var pressureList = [];
-    var iterator = 0;
+    print('Running getHistoricalWeatherData.');
+    var historicalWeather = await getHistoricalWeatherData();
+    print('Recieved data from getHistoricalWeatherData.');
 
-    for (var i = 0; i < daysToRun; i++) {
-      DateTime date = DateTime.now().subtract(Duration(days: i));
-      var dateUnix = date.millisecondsSinceEpoch ~/ 1000;
-      var dateLocal = date.toLocal();
-      var dateReadable = '${dateLocal.month}/${dateLocal.day}';
-      var historicalWeather = await getHistoricalWeatherData(dateUnix);
-      pressureArr[dateReadable] = historicalWeather.pressure.toDouble();
+    print('Running loop to create pressureArr map.');
+    for (var i = 0; i < 7; i++) {
+      pressureArr[historicalWeather['days'][i]['datetimeEpoch']] =
+          historicalWeather['days'][i]['pressure'];
     }
-    print(pressureArr);
-    pressureArr.forEach((k, v) {
-      pressureList.add(WeatherPoint(z: k, y: v, x: iterator.toDouble()));
-      iterator++;
-    });
+    print('Completed for loop.');
 
-    return pressureList;
+    // for (var i = 0; i < daysToRun; i++) {
+    //   DateTime date = DateTime.now().subtract(Duration(days: i));
+    //   var dateUnix = date.millisecondsSinceEpoch ~/ 1000;
+    //   var dateLocal = date.toLocal();
+    //   var dateReadable = '${dateLocal.month}/${dateLocal.day}';
+    //   var historicalWeather = await getHistoricalWeatherData(dateUnix);
+    //   pressureArr[dateReadable] = historicalWeather.pressure.toDouble();
+    // }
+    print(pressureArr);
+    // print('creating list from map');
+    // pressureArr.forEach((k, v) {
+    //   pressureList.add(WeatherPoint(x: k, y: v));
+    //   print('added $k, $v to list');
+    // });
+    // print('Finished creating list');
+
+    return pressureArr;
   }
 }
 
@@ -140,7 +161,7 @@ class HistoricalWeather {
 
   factory HistoricalWeather.fromJson(Map<String, dynamic> json) {
     return HistoricalWeather(
-      pressure: json['data'][0]['pressure'].toDouble(),
+      pressure: json['days'][0]['pressure'].toDouble(),
       timeStamp: json['data'][0]['dt'],
     );
   }
