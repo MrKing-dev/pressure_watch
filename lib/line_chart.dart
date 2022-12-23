@@ -20,7 +20,7 @@ class LineChartWidget extends StatelessWidget {
     final spots = Init.chartData.entries
         .map((element) => FlSpot(
               element.key.toDouble(),
-              element.value,
+              element.value.toDouble(),
             ))
         .toList();
     print(spots);
@@ -48,7 +48,11 @@ class LineChartWidget extends StatelessWidget {
               interval: 5,
               reservedSize: 50,
               getTitlesWidget: (value, meta) {
-                return Text(value.toInt().toString());
+                if (value == meta.max || value == meta.min) {
+                  return Container();
+                } else {
+                  return Text(value.toInt().toString());
+                }
               },
             ),
           ),
@@ -57,12 +61,16 @@ class LineChartWidget extends StatelessWidget {
               showTitles: true,
               reservedSize: 50,
               getTitlesWidget: (value, meta) {
-                final DateTime date =
-                    DateTime.fromMillisecondsSinceEpoch(value.toInt());
-                print(date);
-                final String dateReadable = DateFormat('MM/dd').format(date);
-                print(dateReadable);
-                return RotatedBox(quarterTurns: 1, child: Text(dateReadable));
+                if (value == meta.max || value == meta.min) {
+                  return Container();
+                } else {
+                  final DateTime date =
+                      DateTime.fromMillisecondsSinceEpoch(value.toInt());
+                  print(date);
+                  final String dateReadable = DateFormat('MM/dd').format(date);
+                  print(dateReadable);
+                  return RotatedBox(quarterTurns: 1, child: Text(dateReadable));
+                }
               },
             ),
           ),

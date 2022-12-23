@@ -9,6 +9,8 @@ import 'dart:convert';
 
 class Init {
   static var chartData = {};
+  static var currentWeather;
+
   Future<String> setLocationCity() async {
     Position position = await Data().determinePosition();
     print('Got initial location');
@@ -30,6 +32,8 @@ class Init {
   }
 
   Future<void> loadChartData() async {
+    print('Clearing chart data');
+    chartData = {};
     print('Getting data from weatherPoints');
     chartData = await Data().populateWeatherGraph();
     print('Set chart data from weatherPoints');
@@ -39,6 +43,8 @@ class Init {
     print('Beginning to get location.');
     var output = await setLocationCity();
     print('Location set, getting chart data');
+    currentWeather = await Data().getCurrentWeatherData();
+    print('Got current weather data');
     await loadChartData();
     print('Finished loading chart data');
     return output;

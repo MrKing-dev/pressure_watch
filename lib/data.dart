@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:geocoding/geocoding.dart';
 
+import 'init.dart';
+
 class Data {
   var apiKey = '34be28e6e2d64c17702640838b0efbf8';
   var historykey = 'S7SS885MC58WKKSPJ2DQ96TWX';
@@ -81,14 +83,18 @@ class Data {
     var longitude = position.longitude;
     var placemark = await placemarkFromCoordinates(latitude, longitude);
     var zip = placemark[0].postalCode;
+    var today = DateTime.now();
+    DateFormat formatter = DateFormat('yyyy-MM-dd');
+    var todayFormatted = formatter.format(today);
+    var sevenDaysBeforeNow = today.subtract(Duration(days: 7));
+    var sevenDaysBeforeNowFormatted = formatter.format(sevenDaysBeforeNow);
 
     print('Running api call for getHistoricalWeatherData');
     final response = await http.get(Uri.parse(
-        'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$zip/2022-12-15/2022-12-22?unitGroup=us&elements=datetimeEpoch%2Cpressure&include=days%2Cobs%2Cremote%2Ccurrent%2Cfcst&key=S7SS885MC58WKKSPJ2DQ96TWX&contentType=json'));
+        'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$zip/$sevenDaysBeforeNowFormatted/$todayFormatted?unitGroup=us&elements=datetimeEpoch%2Cpressure&include=days%2Cobs%2Cremote%2Ccurrent%2Cfcst&key=S7SS885MC58WKKSPJ2DQ96TWX&contentType=json'));
 
     if (response.statusCode == 200) {
       print('Got good response from api call in getHistoricalWeatherData');
-      //return HistoricalWeather.fromJson(jsonDecode(response.body));
       return jsonDecode(response.body);
     } else {
       print('Bad api call in getHistoricalWeatherData');
@@ -108,9 +114,16 @@ class Data {
       pressureArr[(historicalWeather['days'][i]['datetimeEpoch']) * 1000] =
           historicalWeather['days'][i]['pressure'];
     }
-    pressureArr[(historicalWeather['currentConditions']['datetimeEpoch']) *
-        1000] = historicalWeather['currentConditions']['pressure'];
-    print('Completed for loop.');
+    print('Finished loop to create pressureArr map.');
+    try {
+      pressureArr[Init.currentWeather.timeStamp * 1000] =
+          Init.currentWeather.pressure;
+      print('Added current pressure to pressureArr map.');
+    } catch (err) {
+      print('Error adding current pressure to pressureArr map.');
+      print(err);
+    }
+    print(pressureArr);
 
     print(pressureArr);
     return pressureArr;

@@ -46,10 +46,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String weather = 'Default weather';
-  num pressure = 0;
-  num temp = 0;
-  var weatherIcon = '01d';
+  String weather = Init.currentWeather.weather;
+  num pressure = Init.currentWeather.pressure;
+  num temp = Init.currentWeather.temp;
+  var weatherIcon = Init.currentWeather.icon;
   double sliderValue = 1.0;
   List chartInputList = [];
 
@@ -61,14 +61,14 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.sunny),
+        child: Icon(Icons.refresh),
         onPressed: () async {
-          CurrentWeather currentWeather = await Data().getCurrentWeatherData();
+          await Init().initialize();
           setState(() {
-            weather = currentWeather.weather;
-            pressure = currentWeather.pressure;
-            temp = currentWeather.temp;
-            weatherIcon = currentWeather.icon;
+            weather = Init.currentWeather.weather;
+            pressure = Init.currentWeather.pressure;
+            temp = Init.currentWeather.temp;
+            weatherIcon = Init.currentWeather.icon;
           });
         },
       ),
@@ -126,10 +126,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       SizedBox(
                         width: 25,
                       ),
-                      Image.network(
-                        'http://openweathermap.org/img/wn/$weatherIcon@2x.png',
-                        scale: 0.75,
-                        color: Colors.grey[400],
+                      Column(
+                        children: [
+                          Image.network(
+                            'http://openweathermap.org/img/wn/$weatherIcon@2x.png',
+                            scale: 0.75,
+                            color: Colors.grey[400],
+                          ),
+                          Text(
+                            weather,
+                            style: Theme.of(context).textTheme.headline6,
+                            textAlign: TextAlign.right,
+                          ),
+                        ],
                       ),
                     ],
                   ),
