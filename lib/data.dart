@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:pressure_watch/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -8,6 +9,7 @@ import 'package:geocoding/geocoding.dart';
 class Data {
   var apiKey = '34be28e6e2d64c17702640838b0efbf8';
   var historykey = 'S7SS885MC58WKKSPJ2DQ96TWX';
+  static var currentWeatherConditions;
 
   Future<Position> determinePosition() async {
     bool serviceEnabled;
@@ -103,27 +105,14 @@ class Data {
 
     print('Running loop to create pressureArr map.');
     for (var i = 0; i < 7; i++) {
-      pressureArr[historicalWeather['days'][i]['datetimeEpoch']] =
+      pressureArr[(historicalWeather['days'][i]['datetimeEpoch']) * 1000] =
           historicalWeather['days'][i]['pressure'];
     }
+    pressureArr[(historicalWeather['currentConditions']['datetimeEpoch']) *
+        1000] = historicalWeather['currentConditions']['pressure'];
     print('Completed for loop.');
 
-    // for (var i = 0; i < daysToRun; i++) {
-    //   DateTime date = DateTime.now().subtract(Duration(days: i));
-    //   var dateUnix = date.millisecondsSinceEpoch ~/ 1000;
-    //   var dateLocal = date.toLocal();
-    //   var dateReadable = '${dateLocal.month}/${dateLocal.day}';
-    //   var historicalWeather = await getHistoricalWeatherData(dateUnix);
-    //   pressureArr[dateReadable] = historicalWeather.pressure.toDouble();
-    // }
     print(pressureArr);
-    // print('creating list from map');
-    // pressureArr.forEach((k, v) {
-    //   pressureList.add(WeatherPoint(x: k, y: v));
-    //   print('added $k, $v to list');
-    // });
-    // print('Finished creating list');
-
     return pressureArr;
   }
 }

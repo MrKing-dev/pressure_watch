@@ -28,8 +28,8 @@ class LineChartWidget extends StatelessWidget {
 
     return LineChart(
       LineChartData(
-        minX: 0,
-        maxX: 7,
+        // minX: 0,
+        // maxX: 7,
         titlesData: FlTitlesData(
           show: true,
           rightTitles: AxisTitles(
@@ -55,33 +55,15 @@ class LineChartWidget extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 30,
-              getTitlesWidget: ((value, meta) =>
-                  Text(value.toInt().toString())),
-              // getTitlesWidget: ((value, meta) {
-              //   switch (DateTime.now()
-              //       .subtract(Duration(days: value.toInt()))
-              //       .toLocal()
-              //       .weekday) {
-              //     case 1:
-              //       return Text('Mon');
-              //     case 2:
-              //       return Text('Tue');
-              //     case 3:
-              //       return Text('Wed');
-              //     case 4:
-              //       return Text('Thu');
-              //     case 5:
-              //       return Text('Fri');
-              //     case 6:
-              //       return Text('Sat');
-              //     case 7:
-              //       return Text('Sun');
-
-              //     default:
-              //       return Text('Invalid');
-              //   }
-              // }),
+              reservedSize: 50,
+              getTitlesWidget: (value, meta) {
+                final DateTime date =
+                    DateTime.fromMillisecondsSinceEpoch(value.toInt());
+                print(date);
+                final String dateReadable = DateFormat('MM/dd').format(date);
+                print(dateReadable);
+                return RotatedBox(quarterTurns: 1, child: Text(dateReadable));
+              },
             ),
           ),
         ),
