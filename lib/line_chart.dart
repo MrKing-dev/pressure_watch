@@ -19,8 +19,8 @@ class LineChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final spots = Init.chartData.entries
         .map((element) => FlSpot(
-              element.key.toDouble(),
-              element.value.toDouble(),
+              double.parse(element.key),
+              double.parse(element.value),
             ))
         .toList();
     print(spots);

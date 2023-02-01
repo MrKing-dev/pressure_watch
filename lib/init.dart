@@ -13,22 +13,23 @@ class Init {
 
   Future<String> setLocationCity() async {
     Position position = await Data().determinePosition();
-    print('Got initial location');
+    print('Got initial location from Init.setLocationCity');
 
-    var output = placemarkFromCoordinates(position.latitude, position.longitude)
+    String city = "";
+
+    await placemarkFromCoordinates(position.latitude, position.longitude)
         .then((placemarks) {
-      var output;
       if (placemarks.isNotEmpty) {
-        output = placemarks[0];
+        var output = placemarks[0];
+        print('Created placemark from Init.setLocationCity');
+        print(output);
+        city = '${output.locality}, ${output.administrativeArea}';
       } else {
-        print('No placemarks');
+        print('No placemarks from Init.setLocationCity');
       }
-      print('Created placemark');
-      print(output);
-      return '${output.locality}, ${output.administrativeArea}';
     });
-    print('Returning specific location');
-    return output;
+    print('Returning specific location from Init.setLocationCity: $city');
+    return city;
   }
 
   Future<void> loadChartData() async {
@@ -40,13 +41,13 @@ class Init {
   }
 
   Future<String> initialize() async {
-    print('Beginning to get location.');
+    print('Beginning to get location from Init.initialize');
     var output = await setLocationCity();
-    print('Location set, getting chart data');
+    print('Location set, getting chart data within Init.initialize');
     currentWeather = await Data().getCurrentWeatherData();
-    print('Got current weather data');
+    print('Got current weather data from Init.initialize');
     await loadChartData();
-    print('Finished loading chart data');
+    print('Finished loading chart data from Init.initialize');
     return output;
   }
 }

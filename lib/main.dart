@@ -46,8 +46,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String weather = Init.currentWeather.weather;
   num pressure = Init.currentWeather.pressure;
+  String weather = Init.currentWeather.weather;
   num temp = Init.currentWeather.temp;
   var weatherIcon = Init.currentWeather.icon;
   double sliderValue = 1.0;

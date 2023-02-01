@@ -9,7 +9,7 @@ import 'package:geocoding/geocoding.dart';
 import 'init.dart';
 
 class Data {
-  var apiKey = '34be28e6e2d64c17702640838b0efbf8';
+  var apiKey = 'S7SS885MC58WKKSPJ2DQ96TWX';
   var historykey = 'S7SS885MC58WKKSPJ2DQ96TWX';
   static var currentWeatherConditions;
 
@@ -61,17 +61,22 @@ class Data {
 
   Future<CurrentWeather> getCurrentWeatherData() async {
     Position position = await determinePosition();
+    print('Finished location for getCurrentWeatherData');
     var latitude = position.latitude;
     var longitude = position.longitude;
-
+    var placemark = await placemarkFromCoordinates(latitude, longitude);
+    var zip = placemark[0].postalCode;
+    print('Calling api from getCurrentWeatherData');
     final response = await http.get(Uri.parse(
-        'https://api.openweathermap.org/data/3.0/onecall?lat=$latitude&lon=$longitude&exclude=minutely,hourly&units=imperial&appid=$apiKey'));
-
+        'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$zip?unitGroup=us&key=$apiKey&contentType=json'));
+    print('Finished api call from getCurrentWeatherData');
     if (response.statusCode == 200) {
       return CurrentWeather.fromJson(jsonDecode(response.body));
+      print('Finished jsonDecode from getCurrentWeatherData');
     } else {
       throw Exception('Failed to load current weather data');
     }
+    print('Finished getCurrentWeatherData');
   }
 
   Future<dynamic> getHistoricalWeatherData() async {
@@ -146,11 +151,11 @@ class CurrentWeather {
 
   factory CurrentWeather.fromJson(Map<String, dynamic> json) {
     return CurrentWeather(
-      timeStamp: json['current']['dt'],
-      temp: json['current']['temp'],
-      pressure: json['current']['pressure'],
-      weather: json['current']['weather'][0]['main'],
-      icon: json['current']['weather'][0]['icon'],
+      timeStamp: json['days'][0]['datetime'],
+      temp: json['days'][0]['temp'],
+      pressure: json['days'][0]['pressure'],
+      weather: json['days'][0]['conditions'],
+      icon: json['days'][0]['icon'],
     );
   }
 }
