@@ -151,7 +151,7 @@ class CurrentWeather {
 
   factory CurrentWeather.fromJson(Map<String, dynamic> json) {
     return CurrentWeather(
-      timeStamp: json['days'][0]['datetime'],
+      timeStamp: json['days'][0]['datetimeEpoch'],
       temp: json['days'][0]['temp'],
       pressure: json['days'][0]['pressure'],
       weather: json['days'][0]['conditions'],

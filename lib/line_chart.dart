@@ -4,7 +4,6 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'init.dart';
-
 import 'colors.dart';
 
 class LineChartWidget extends StatelessWidget {
@@ -17,14 +16,15 @@ class LineChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Original Init data: ${Init.chartData}');
+
     final spots = Init.chartData.entries
         .map((element) => FlSpot(
-              double.parse(element.key),
-              double.parse(element.value),
+              element.key.toDouble(),
+              element.value.toDouble(),
             ))
         .toList();
-    print(spots);
-    print(Init.chartData);
+    print('New Spots Data: $spots');
 
     return LineChart(
       LineChartData(

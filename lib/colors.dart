@@ -34,6 +34,7 @@ class ColorGradients {
 
 class ColorThemes {
   ThemeData darkTheme = ThemeData.dark().copyWith(
+    useMaterial3: true,
     colorScheme: const ColorScheme.dark().copyWith(
       primary: Colors.tealAccent,
       secondary: Colors.limeAccent,
@@ -41,6 +42,7 @@ class ColorThemes {
   );
 
   ThemeData lightTheme = ThemeData.light().copyWith(
+    useMaterial3: true,
     colorScheme: const ColorScheme.light().copyWith(
       primary: Colors.blueAccent,
       secondary: Colors.purple,

@@ -5,6 +5,7 @@ import 'package:pressure_watch/init.dart';
 import 'package:pressure_watch/line_chart.dart';
 import 'package:pressure_watch/splash_screen.dart';
 import 'package:pressure_watch/colors.dart';
+import 'package:pressure_watch/weathericons.dart';
 
 void main() {
   runApp(const MyApp());
@@ -127,12 +128,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         width: 25,
                       ),
                       Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.network(
-                            'http://openweathermap.org/img/wn/$weatherIcon@2x.png',
-                            scale: 0.75,
-                            color: Colors.grey[400],
-                          ),
+                          WeatherIcon(weatherIcon),
                           Text(
                             weather,
                             style: Theme.of(context).textTheme.headline6,
