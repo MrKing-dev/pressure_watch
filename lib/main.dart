@@ -59,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        scrolledUnderElevation: 5,
         actions: [],
       ),
       floatingActionButton: FloatingActionButton(
@@ -116,25 +117,23 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: 25,
-                      ),
                       Container(
                         width: 3,
                         height: double.infinity,
                         color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 25,
+                        margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           WeatherIcon(weatherIcon),
-                          Text(
-                            weather,
-                            style: Theme.of(context).textTheme.headline6,
-                            textAlign: TextAlign.right,
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Text(
+                              weather,
+                              style: Theme.of(context).textTheme.headline6,
+                              textAlign: TextAlign.right,
+                            ),
                           ),
                         ],
                       ),

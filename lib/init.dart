@@ -41,6 +41,7 @@ class Init {
   }
 
   Future<String> initialize() async {
+    imageCache.clear();
     print('Beginning to get location from Init.initialize');
     var output = await setLocationCity();
     print('Location set, getting chart data within Init.initialize');
